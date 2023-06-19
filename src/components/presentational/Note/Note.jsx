@@ -1,7 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 
-const Note = ({ title, content, date, color, id, onDelete, onEdit }) => {
+const Note = ({
+  title,
+  content,
+  date,
+  color,
+  id,
+  category,
+  onDelete,
+  onStartEditing,
+  onDuplicate
+}) => {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -9,8 +19,18 @@ const Note = ({ title, content, date, color, id, onDelete, onEdit }) => {
   });
   return (
     <NoteWrapper style={{ backgroundColor: color }}>
-      <DeleteButton onClick={() => onDelete(id)}>X</DeleteButton>
+      <ActionButton positionRight={10} onClick={() => onDelete(id)}>
+        X
+      </ActionButton>
+      <ActionButton positionRight={40} onClick={onStartEditing}>
+        Edit
+      </ActionButton>
+      <ActionButton positionRight={80} onClick={() => onDuplicate(id)}>
+        Dup
+      </ActionButton>
       <NoteTitle>{title}</NoteTitle>
+      <NoteTitle>Note ID:{id}</NoteTitle>
+      <NoteTitle>Category: {category ? category : "None"}</NoteTitle>
       <NoteDate>{formattedDate}</NoteDate>
       <NoteContent>{content}</NoteContent>
     </NoteWrapper>
@@ -20,6 +40,7 @@ const Note = ({ title, content, date, color, id, onDelete, onEdit }) => {
 export default Note;
 
 const NoteWrapper = styled.div`
+  margin-left: 350px;
   width: 400px;
   min-height: 150px;
   padding: 16px;
@@ -32,10 +53,10 @@ const NoteWrapper = styled.div`
   position: relative;
 `;
 
-const DeleteButton = styled.button`
+const ActionButton = styled.button`
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: ${({ positionRight }) => `${positionRight}px`};
   background: red;
   color: white;
   border: none;

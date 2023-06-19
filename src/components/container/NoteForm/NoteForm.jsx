@@ -1,44 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-function NoteForm({ onFormSubmit }) {
+function NoteForm({ onFormSubmit, onFormEdit, editingNote }) {
   const [formData, setFormData] = useState({
+    id: null,
     title: "",
     date: "",
     note: "",
+    category: "",
     color: "#fefbc0"
   });
+  const [isEditing, setIsEditing] = useState(false);
 
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData({
+    let newFormData = {
       ...formData,
       [name]: value
-    });
+    };
+
+    const categoryColors = {
+      Reminder: "#ff837a",
+      Memo: "#fbd470",
+      Birthday: "#a1c5ff",
+      "": "#fefbc0"
+    };
+
+    if (name === "category" && categoryColors[value]) {
+      newFormData.color = categoryColors[value];
+    }
+
+    setFormData(newFormData);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onFormSubmit(formData.title, formData.note, formData.date, formData.color);
+    if (isEditing) {
+      onFormEdit(
+        formData.id,
+        formData.title,
+        formData.note,
+        formData.date,
+        formData.color,
+        formData.category
+      );
+    } else {
+      onFormSubmit(
+        formData.title,
+        formData.note,
+        formData.date,
+        formData.color,
+        formData.category
+      );
+    }
     setFormData({
+      id: null,
       title: "",
       date: "",
       note: "",
+      category: "",
       color: "#fefac0"
     });
+    setIsEditing(false);
   };
 
   const toggleVisibility = () => {
     setIsFormVisible((prevState) => !prevState);
   };
 
+  useEffect(() => {
+    if (editingNote) {
+      setFormData({
+        id: editingNote.id,
+        title: editingNote.title,
+        date: editingNote.date,
+        note: editingNote.content,
+        category: editingNote.category,
+        color: editingNote.color
+      });
+      setIsEditing(true);
+    }
+  }, [editingNote]);
+
   return (
     <Form onSubmit={handleSubmit}>
       {isFormVisible ? (
         <>
-          <h2>New Note</h2>
+          <h2>
+            {isEditing ? `Editing Note with ID: ${formData.id}` : "New Note"}
+          </h2>
           <CloseButton onClick={toggleVisibility}>X</CloseButton>
           <input
             type="text"
@@ -66,14 +118,30 @@ function NoteForm({ onFormSubmit }) {
             rows={15}
             required
           />
+          <h2>Category</h2>
+          <select
+            name="category"
+            type="text"
+            className="form--input"
+            value={formData.category}
+            onChange={handleInputChange}
+          >
+            <option value=""></option>
+            <option value="Reminder">Reminder</option>
+            <option value="Memo">Memo</option>
+            <option value="Birthday">Birthday</option>
+          </select>
           <h2>Note Colour</h2>
           <input
             type="color"
             name="color"
             value={formData.color}
             onChange={handleInputChange}
+            disabled={formData.category !== ""}
           />
-          <SubmitButton>Add To Notes</SubmitButton>
+          <SubmitButton>
+            {isEditing ? "Update Note" : "Add To Notes"}
+          </SubmitButton>
         </>
       ) : (
         <OpenButton onClick={toggleVisibility}>Open Form</OpenButton>
@@ -92,7 +160,7 @@ const Form = styled.form`
   padding: 20px 48px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  height: calc(100vh - 190px); /* Adjusted the height */
+  height: calc(100vh - 190px);
   width: 300px;
   overflow-y: auto;
   .form--input {
