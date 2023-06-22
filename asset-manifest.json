@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.073c9b0a.css",
-    "main.js": "/static/js/main.95741b63.js",
-    "static/js/787.60ae48a4.chunk.js": "/static/js/787.60ae48a4.chunk.js",
-    "index.html": "/index.html",
-    "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.95741b63.js.map": "/static/js/main.95741b63.js.map",
-    "787.60ae48a4.chunk.js.map": "/static/js/787.60ae48a4.chunk.js.map"
+    "main.css": "/react-notepad/static/css/main.073c9b0a.css",
+    "main.js": "/react-notepad/static/js/main.84314de3.js",
+    "static/js/787.60ae48a4.chunk.js": "/react-notepad/static/js/787.60ae48a4.chunk.js",
+    "index.html": "/react-notepad/index.html",
+    "main.073c9b0a.css.map": "/react-notepad/static/css/main.073c9b0a.css.map",
+    "main.84314de3.js.map": "/react-notepad/static/js/main.84314de3.js.map",
+    "787.60ae48a4.chunk.js.map": "/react-notepad/static/js/787.60ae48a4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.95741b63.js"
+    "static/js/main.84314de3.js"
   ]
 }
