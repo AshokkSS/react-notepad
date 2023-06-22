@@ -5,7 +5,7 @@
 - For any notes in categories the colours are locked and can not be changed, non categorised notes colours are choosable and can be randomised by the randomise colours button in the navbar.
 - Notes are persistent and does not rely on the browser session.
 
-[![Demo Video](https://img.youtube.com/vi/dj0JV0PRd8g/hqdefault.jpg)](https://youtu.be/dj0JV0PRd8g)
+[![Demo Video](https://img.youtube.com/vi/dj0JV0PRd8g/maxresdefault.jpg)](https://youtu.be/dj0JV0PRd8g)
 
 ### Challenge requirements
 
