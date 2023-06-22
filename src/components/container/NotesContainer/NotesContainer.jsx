@@ -1,11 +1,12 @@
 import Note from "../../presentational/Note";
 import NoteForm from "../NoteForm";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import randomColor from "randomcolor";
 
 const NotesContainer = () => {
-  const [notes, setNotes] = useState([]);
+  const storedItems = JSON.parse(localStorage.getItem("notes"));
+  const [notes, setNotes] = useState(storedItems);
   const [dateType, setDateType] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [filterState, setFilterState] = useState(0);
@@ -29,6 +30,21 @@ const NotesContainer = () => {
       ? true
       : note.category === filterStates[filterState]
   );
+  const categoriseNotes = (notes) => {
+    const categories = {};
+
+    notes.forEach((note) => {
+      const category = note.category || "No Category";
+      if (!categories[category]) {
+        categories[category] = [];
+      }
+      categories[category].push(note);
+    });
+    console.log(categories);
+    return categories;
+  };
+
+  const categorisedNotes = categoriseNotes(notes);
 
   const handleFormSubmit = (title, content, date, color, category) => {
     const newNote = {
@@ -85,6 +101,10 @@ const NotesContainer = () => {
     setNotes(newNotes);
   };
 
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }, [notes]);
+
   const handleDuplicate = (id) => {
     const noteToDuplicate = notes.find((note) => note.id === id);
     const newNote = {
@@ -96,6 +116,11 @@ const NotesContainer = () => {
       category: noteToDuplicate.category
     };
     setNotes([...notes, newNote]);
+  };
+  const deleteAllNotes = () => {
+    if (window.confirm("Are you sure you want to delete all notes?")) {
+      setNotes([]);
+    }
   };
   return (
     <Container>
@@ -120,40 +145,81 @@ const NotesContainer = () => {
               <NavLink onClick={toggleCategoryFilter}>
                 {filterLabels[filterState]}
               </NavLink>
+              <NavLink onClick={deleteAllNotes}>Delete All Notes</NavLink>
             </NavLinks>
           </Navbar>
-          <h2>{filterLabels[filterState]}</h2>
-          <NotesGrid>
-            {displayedNotes
-              .sort((a, b) =>
-                dateType
-                  ? new Date(a.date) - new Date(b.date)
-                  : new Date(b.date) - new Date(a.date)
-              )
-              .map((note) => (
-                <Note
-                  key={note.id}
-                  id={note.id}
-                  onDelete={handleDelete}
-                  onStartEditing={() => startEditing(note)}
-                  onDuplicate={handleDuplicate}
-                  title={note.title}
-                  date={note.date}
-                  content={note.content}
-                  color={note.color}
-                  category={note.category}
-                />
-              ))}
-          </NotesGrid>
+          {filterStates[filterState] === null ? (
+            Object.keys(categorisedNotes).map((category) => (
+              <CategoryContainer key={category}>
+                <CategoryHeading>{category} Notes</CategoryHeading>
+                <NotesGrid>
+                  {categorisedNotes[category]
+                    .sort((a, b) =>
+                      dateType
+                        ? new Date(a.date) - new Date(b.date)
+                        : new Date(b.date) - new Date(a.date)
+                    )
+                    .map((note) => (
+                      <Note
+                        key={note.id}
+                        id={note.id}
+                        onDelete={handleDelete}
+                        onStartEditing={() => startEditing(note)}
+                        onDuplicate={handleDuplicate}
+                        title={note.title}
+                        date={note.date}
+                        content={note.content}
+                        color={note.color}
+                        category={note.category}
+                      />
+                    ))}
+                </NotesGrid>
+              </CategoryContainer>
+            ))
+          ) : (
+            <div>
+              <CategoryHeading>{filterLabels[filterState]}</CategoryHeading>
+              <NotesGrid>
+                {displayedNotes
+                  .sort((a, b) =>
+                    dateType
+                      ? new Date(a.date) - new Date(b.date)
+                      : new Date(b.date) - new Date(a.date)
+                  )
+                  .map((note) => (
+                    <Note
+                      key={note.id}
+                      id={note.id}
+                      onDelete={handleDelete}
+                      onStartEditing={() => startEditing(note)}
+                      onDuplicate={handleDuplicate}
+                      title={note.title}
+                      date={note.date}
+                      content={note.content}
+                      color={note.color}
+                      category={note.category}
+                    />
+                  ))}
+              </NotesGrid>
+            </div>
+          )}
         </NotesGridWrapper>
       ) : (
-        <Title>No notes saved!</Title>
+        <CategoryHeading>No notes saved!</CategoryHeading>
       )}
     </Container>
   );
 };
 
 export default NotesContainer;
+
+const CategoryContainer = styled.div`
+  margin: 20px 0;
+`;
+
+const CategoryHeading = styled.h2`
+  margin-left: 40px;
+`;
 
 const Navbar = styled.nav`
   display: flex;
@@ -187,9 +253,7 @@ const Container = styled.div`
   flex-direction: row;
 `;
 
-const FormWrapper = styled.div`
-  margin-right: 20px;
-`;
+const FormWrapper = styled.div``;
 
 const NotesGridWrapper = styled.div`
   flex-grow: 1;
@@ -198,33 +262,12 @@ const NotesGridWrapper = styled.div`
 const NotesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(auto-fit, minmax(240px, 1fr));
   grid-gap: 20px;
   height: 100%;
   padding: 20px; /* This padding should be matched in NavLinks */
 
   @media screen and (max-width: 1600px) {
     grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-const Title = styled.h2`
-  position: relative;
-  color: black;
-  width: 100%;
-  font-weight: 700;
-  font-size: 26px;
-`;
-const CloseButton = styled.button`
-  position: relative;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #e74c3c;
-  &:hover {
-    color: #c0392b;
   }
 `;

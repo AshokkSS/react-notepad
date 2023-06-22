@@ -1,6 +1,13 @@
 # React Notepad Challenge
+## Features
+- Able to add, edit, duplicate and delete notes.
+- Notes will be displayed in Categories and can toggle through the categories to display the chosen category.
+- For any notes in categories the colours are locked and can not be changed, non categorised notes colours are choosable and can be randomised by the randomise colours button in the navbar.
+- Notes are persistent and does not rely on the browser session.
 
-### Challenge
+[![Demo Video](https://img.youtube.com/vi/dj0JV0PRd8g/maxresdefault.jpg)](https://youtu.be/dj0JV0PRd8g)
+
+### Challenge requirements
 
 You will create a React Project from Scratch... this is just an example.
 
