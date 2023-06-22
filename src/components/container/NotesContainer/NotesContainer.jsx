@@ -6,7 +6,7 @@ import randomColor from "randomcolor";
 
 const NotesContainer = () => {
   const storedItems = JSON.parse(localStorage.getItem("notes"));
-  const [notes, setNotes] = useState(storedItems);
+  const [notes, setNotes] = useState(storedItems || []);
   const [dateType, setDateType] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [filterState, setFilterState] = useState(0);
